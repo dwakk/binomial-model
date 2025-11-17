@@ -54,6 +54,11 @@ class BinomialTree:
 
 		self.option_price = self.option_values[0][0]
 
+		self.profit_values = [[0] * (i+1) for i in range(self.steps + 1)]
+		for step in range(self.steps + 1):
+			for node in range(step + 1):
+				self.profit_values[step][node] = self.option_values[step][node] - self.option_price
+
 	def find_most_likely_path(self):
 		probs = [[0] * (i+1) for i in range(self.steps + 1)]
 		probs[0][0] = 1.0
@@ -88,6 +93,9 @@ class BinomialTree:
 			path.append(current_node)
 		
 		self.most_likely_path = list(reversed(path))
+		self.most_likely_payoff = self.option_values[self.steps][probs[self.steps].index(max(probs[self.steps]))]
+		self.most_likely_prob = probs[self.steps][probs[self.steps].index(max(probs[self.steps]))]
+		self.most_likely_profit = self.profit_values[self.steps][probs[self.steps].index(max(probs[self.steps]))]
 	
 	def black_scholes_price(self):
 		if self.option_type == "call":

@@ -19,6 +19,7 @@ class TreeVisualizer:
 		self.option_type_var = tk.StringVar(value=self.tree.option_type)
 		self.show_stock_var = tk.BooleanVar(value=False)
 		self.show_most_likely_path_var = tk.BooleanVar(value=False)
+		self.show_profits_var = tk.BooleanVar(value=False)
 
 		self.setup_ui()
 		self.update_price_display()
@@ -93,12 +94,16 @@ class TreeVisualizer:
 		display_frame = ttk.LabelFrame(control_frame, text="Display", padding=10)
 		display_frame.grid(row=0, column=4, rowspan=2, sticky="nsew", padx=10, pady=5)
 
-		ttk.Checkbutton(display_frame, text="Show stock prices", variable=self.show_stock_var, command=self.on_param_change).grid(row=0, column=0, sticky="w")
-		ttk.Checkbutton(display_frame, text="Show most likely path", variable=self.show_most_likely_path_var, command=self.on_param_change).grid(row=1, column=0, sticky="w")
-		ttk.Button(display_frame, text="Plot convergence", command=self.open_plot_window).grid(row=2, column=0, sticky="w")
+		ttk.Checkbutton(display_frame, text="Show stock prices", variable=self.show_stock_var, command=self.draw_tree).grid(row=0, column=0, sticky="w")
+		ttk.Checkbutton(display_frame, text="Show most likely path", variable=self.show_most_likely_path_var, command=self.draw_tree).grid(row=1, column=0, sticky="w")
+		ttk.Checkbutton(display_frame, text="Show profits", variable=self.show_profits_var, command=self.draw_tree).grid(row=2, column=0, sticky="w")
+		ttk.Button(display_frame, text="Plot convergence", command=self.open_plot_window).grid(row=3, column=0, sticky="w")
 
 		self.price_label = ttk.Label(control_frame, text="Option price: ", font=("Arial", 12, "bold"))
 		self.price_label.grid(row=2, column=0, columnspan=3, pady=5, sticky="w")
+
+		self.payoff_label = ttk.Label(control_frame, text="Estimated payoff at T: ", font=("Arial", 12, "bold"))
+		self.payoff_label.grid(row=3, column=0, columnspan=3, pady=5, sticky="w")
 
 		zoom_frame = ttk.LabelFrame(control_frame, text="Navigation", padding=10)
 		zoom_frame.grid(row=0, column=5, rowspan=2, sticky="nsew", padx=10, pady=5)
@@ -230,8 +235,20 @@ class TreeVisualizer:
 					color = 'lightgreen' if option_value > 0 else 'lightcoral'
 				else:
 					color = 'lightblue' if option_value > 0 else 'lightcoral'
+
+				if self.show_profits_var.get():
+					profit = self.tree.profit_values[step][node]
+					if profit > 0:
+						color = 'lightgreen' if self.option_type_var.get() == "call" else 'lightblue'
+					else:
+						color = 'lightcoral'
+
 				self.canvas.create_oval(x - node_radius, y - node_radius, x + node_radius, y + node_radius, fill=color, outline='black', width=1)
-				self.canvas.create_text(x, y, text=f"{option_value:.2f}", font=("Arial", int(max(9, (node_radius // 3))*self.zoom_factor)), fill='black')
+				
+				if self.show_profits_var.get():
+					self.canvas.create_text(x, y, text=f"{profit:.2f}", font=("Arial", int(max(9, (node_radius // 3))*self.zoom_factor)), fill='black')
+				else:
+					self.canvas.create_text(x, y, text=f"{option_value:.2f}", font=("Arial", int(max(9, (node_radius // 3))*self.zoom_factor)), fill='black')
 
 				if self.show_stock_var.get():
 					stock_price = self.tree.prices[step][node]
@@ -259,12 +276,12 @@ class TreeVisualizer:
 				self.canvas.create_line(x1, y1, x2, y2, fill="green", width=4)
 
 	def on_param_change(self, event=None):
-		self.steps_var.set(int(round(self.steps_var.get())))
-		self.s0_var.set(int(round(self.s0_var.get())))
-		self.k_var.set(int(round(self.k_var.get())))
-		self.r_var.set(round(self.r_var.get(), 3))
-		self.sigma_var.set(round(self.sigma_var.get(), 3))
-		self.T_var.set(round(self.T_var.get(), 2))
+		current_params = (self.steps_var.set(int(round(self.steps_var.get()))),
+		self.s0_var.set(int(round(self.s0_var.get()))),
+		self.k_var.set(int(round(self.k_var.get()))),
+		self.r_var.set(round(self.r_var.get(), 3)),
+		self.sigma_var.set(round(self.sigma_var.get(), 3)),
+		self.T_var.set(round(self.T_var.get(), 2)))
 
 		self.tree = BinomialTree(
 			S0=max(1, self.s0_var.get()),
@@ -281,7 +298,8 @@ class TreeVisualizer:
 		self.draw_tree()
 
 	def update_price_display(self):
-		self.price_label.config(text=f"Price: {self.tree.option_price:.2f}")
+		self.price_label.config(text=f"Option price: {self.tree.option_price:.2f}")
+		self.payoff_label.config(text=f"Estimated payoff at T: {self.tree.most_likely_payoff:.2f} with probability {self.tree.most_likely_prob * 100:.2f}%")
 
 	def on_resize(self, event):
 		if hasattr(self, '_resize_after'):
