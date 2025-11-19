@@ -44,10 +44,4 @@ class ConfigWindow:
         print("Étapes:", self.steps_var.get())
         print("Type d’option:", self.option_type_var.get())
 
-# =========================
-# Lancement
-# =========================
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = ConfigWindow(root)
-    root.mainloop()
+
