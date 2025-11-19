@@ -1,0 +1,6 @@
+main2 : 
+root = tk.Tk()
+root.title("Binomial Tree Pricing Model")
+root.geometry("400x300")
+app = ConfigWindow(root)
+root.mainloop()
