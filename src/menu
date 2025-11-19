@@ -1,9 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
+from binomial_tree import BinomialTree
+from tree_visualizer import TreeVisualizer
 
-# =========================
-# Menu simplifié en français
-# =========================
 class ConfigWindow:
     def __init__(self, root):
         self.root = root
@@ -14,34 +13,60 @@ class ConfigWindow:
         frame = ttk.Frame(self.root, padding=20)
         frame.pack()
 
-        ttk.Label(frame, text="Durée (années) :").grid(row=0, column=0, sticky="e")
-        self.T_var = tk.DoubleVar(value=1)
-        ttk.Entry(frame, textvariable=self.T_var).grid(row=0, column=1)
+        # Prix initial
+        ttk.Label(frame, text="Prix initial S0 :").grid(row=0, column=0, sticky="e")
+        self.S0_var = tk.DoubleVar(value=150)
+        ttk.Entry(frame, textvariable=self.S0_var).grid(row=0, column=1)
 
-        ttk.Label(frame, text="Volatilité σ :").grid(row=1, column=0, sticky="e")
-        self.sigma_var = tk.DoubleVar(value=0.2)
-        ttk.Entry(frame, textvariable=self.sigma_var).grid(row=1, column=1)
+        # Strike
+        ttk.Label(frame, text="Strike K :").grid(row=1, column=0, sticky="e")
+        self.K_var = tk.DoubleVar(value=140)
+        ttk.Entry(frame, textvariable=self.K_var).grid(row=1, column=1)
 
-        ttk.Label(frame, text="Taux d’intérêt r :").grid(row=2, column=0, sticky="e")
-        self.r_var = tk.DoubleVar(value=0.05)
-        ttk.Entry(frame, textvariable=self.r_var).grid(row=2, column=1)
+        # Durée
+        ttk.Label(frame, text="Durée (années) T :").grid(row=2, column=0, sticky="e")
+        self.T_var = tk.DoubleVar(value=0.5)
+        ttk.Entry(frame, textvariable=self.T_var).grid(row=2, column=1)
 
-        ttk.Label(frame, text="Nombre d'étapes :").grid(row=3, column=0, sticky="e")
+        # Volatilité
+        ttk.Label(frame, text="Volatilité σ :").grid(row=3, column=0, sticky="e")
+        self.sigma_var = tk.DoubleVar(value=0.25)
+        ttk.Entry(frame, textvariable=self.sigma_var).grid(row=3, column=1)
+
+        # Taux
+        ttk.Label(frame, text="Taux d’intérêt r :").grid(row=4, column=0, sticky="e")
+        self.r_var = tk.DoubleVar(value=0.04)
+        ttk.Entry(frame, textvariable=self.r_var).grid(row=4, column=1)
+
+        # Étapes
+        ttk.Label(frame, text="Nombre d'étapes :").grid(row=5, column=0, sticky="e")
         self.steps_var = tk.IntVar(value=10)
-        ttk.Entry(frame, textvariable=self.steps_var).grid(row=3, column=1)
+        ttk.Entry(frame, textvariable=self.steps_var).grid(row=5, column=1)
 
-        ttk.Label(frame, text="Type d’option :").grid(row=4, column=0, sticky="e")
-        self.option_type_var = tk.StringVar(value="Achat")
-        ttk.Combobox(frame, textvariable=self.option_type_var, values=["Achat", "Vente"], state="readonly").grid(row=4, column=1)
+        # Type d’option
+        ttk.Label(frame, text="Type d’option :").grid(row=6, column=0, sticky="e")
+        self.option_type_var = tk.StringVar(value="call")
+        ttk.Combobox(frame, textvariable=self.option_type_var, values=["call", "put"], state="readonly").grid(row=6, column=1)
 
-        ttk.Button(frame, text="Créer l'Arbre", command=self.create_tree).grid(row=5, column=0, columnspan=2, pady=10)
+        # Bouton pour créer l'arbre
+        ttk.Button(frame, text="Créer l'Arbre", command=self.create_tree).grid(row=7, column=0, columnspan=2, pady=10)
 
     def create_tree(self):
-        # Ici tu peux juste récupérer les valeurs ou afficher un message
-        print("Durée:", self.T_var.get())
-        print("Volatilité:", self.sigma_var.get())
-        print("Taux:", self.r_var.get())
-        print("Étapes:", self.steps_var.get())
-        print("Type d’option:", self.option_type_var.get())
+        # Créer l'arbre binomial avec les valeurs du menu
+        tree = BinomialTree(
+            S0=self.S0_var.get(),
+            K=self.K_var.get(),
+            T=self.T_var.get(),
+            r=self.r_var.get(),
+            sigma=self.sigma_var.get(),
+            steps=self.steps_var.get(),
+            option_type=self.option_type_var.get(),
+            max_steps=50
+        )
 
+        # Ouvrir une nouvelle fenêtre pour le visualizer
+        new_window = tk.Toplevel(self.root)
+        new_window.title("Visualisation de l'Arbre Binomial")
+        new_window.geometry("1200x800")
+        visualizer = TreeVisualizer(new_window, tree)
 
