@@ -4,7 +4,7 @@ from binomial_tree import BinomialTree
 from tree_visualizer import TreeVisualizer
 
 
-class App:
+class ConfigWindow:
     def __init__(self, root):
         self.root = root
         self.root.title("Configuration de l'Arbre Binomial")
