@@ -10,14 +10,10 @@ class ConfigWindow:
         self.root.title("Configuration de l'Arbre Binomial")
         self.root.geometry("450x400")
         
-        # Centrer la fenêtre
         self.center_window()
-        
-        # Créer le menu
         self.create_menu()
    
     def center_window(self):
-        """Centre la fenêtre sur l'écran"""
         self.root.update_idletasks()
         width = self.root.winfo_width()
         height = self.root.winfo_height()
@@ -26,12 +22,9 @@ class ConfigWindow:
         self.root.geometry(f'{width}x{height}+{x}+{y}')
    
     def create_menu(self):
-        """Crée l'interface du menu de configuration"""
-        # Frame principal avec un titre
         main_frame = ttk.Frame(self.root, padding=20)
         main_frame.pack(fill=tk.BOTH, expand=True)
         
-        # Titre
         title_label = ttk.Label(
             main_frame, 
             text="Paramètres de l'Option",
@@ -39,11 +32,9 @@ class ConfigWindow:
         )
         title_label.grid(row=0, column=0, columnspan=2, pady=(0, 20))
         
-        # Frame pour les paramètres
         self.menu_frame = ttk.Frame(main_frame)
         self.menu_frame.grid(row=1, column=0, columnspan=2)
       
-        # Prix initial
         ttk.Label(self.menu_frame, text="Prix initial S₀ :").grid(
             row=0, column=0, sticky="e", padx=5, pady=5
         )
@@ -52,7 +43,6 @@ class ConfigWindow:
             row=0, column=1, pady=5
         )
         
-        # Strike
         ttk.Label(self.menu_frame, text="Strike K :").grid(
             row=1, column=0, sticky="e", padx=5, pady=5
         )
@@ -61,7 +51,6 @@ class ConfigWindow:
             row=1, column=1, pady=5
         )
         
-        # Durée
         ttk.Label(self.menu_frame, text="Durée (années) T :").grid(
             row=2, column=0, sticky="e", padx=5, pady=5
         )
@@ -70,7 +59,6 @@ class ConfigWindow:
             row=2, column=1, pady=5
         )
         
-        # Volatilité
         ttk.Label(self.menu_frame, text="Volatilité σ :").grid(
             row=3, column=0, sticky="e", padx=5, pady=5
         )
@@ -79,7 +67,6 @@ class ConfigWindow:
             row=3, column=1, pady=5
         )
        
-        # Taux d'intérêt
         ttk.Label(self.menu_frame, text="Taux d'intérêt r :").grid(
             row=4, column=0, sticky="e", padx=5, pady=5
         )
@@ -88,7 +75,6 @@ class ConfigWindow:
             row=4, column=1, pady=5
         )
         
-        # Nombre d'étapes
         ttk.Label(self.menu_frame, text="Nombre d'étapes :").grid(
             row=5, column=0, sticky="e", padx=5, pady=5
         )
@@ -97,7 +83,6 @@ class ConfigWindow:
             row=5, column=1, pady=5
         )
        
-        # Type d'option
         ttk.Label(self.menu_frame, text="Type d'option :").grid(
             row=6, column=0, sticky="e", padx=5, pady=5
         )
@@ -111,7 +96,6 @@ class ConfigWindow:
         )
         option_combo.grid(row=6, column=1, pady=5)
         
-        # Bouton de création
         create_btn = ttk.Button(
             main_frame, 
             text="Créer l'Arbre", 
@@ -119,16 +103,12 @@ class ConfigWindow:
         )
         create_btn.grid(row=2, column=0, columnspan=2, pady=20)
         
-        # Style pour le bouton (optionnel)
         style = ttk.Style()
         style.configure('TButton', padding=6)
     
     def create_tree(self):
-        """Crée l'arbre binomial et ouvre la fenêtre de visualisation"""
-        # Masquer la fenêtre principale
         self.root.withdraw()
        
-        # Créer l'arbre binomial
         tree = BinomialTree(
             S0=self.S0_var.get(),
             K=self.K_var.get(),
@@ -140,25 +120,12 @@ class ConfigWindow:
             max_steps=50
         )
         
-        # Créer la fenêtre de visualisation
         self.viewer_window = tk.Toplevel(self.root)
         self.viewer_window.title("Visualisation de l'Arbre Binomial")
         self.viewer_window.geometry("1200x800")
         
-        # Gérer la fermeture de la fenêtre
         self.viewer_window.protocol("WM_DELETE_WINDOW", lambda: self.on_viewer_close())
         
-        # # Bouton retour
-        # btn_frame = ttk.Frame(self.viewer_window)
-        # btn_frame.pack(pady=10)
-        
-        # ttk.Button(
-        #     btn_frame, 
-        #     text="← Retour au Menu", 
-        #     command=self.return_to_menu
-        # ).pack()
-        
-        # Créer le visualiseur
         self.visualizer = TreeVisualizer(self.viewer_window, tree)
    
     def on_viewer_close(self, viewer_window=None):
