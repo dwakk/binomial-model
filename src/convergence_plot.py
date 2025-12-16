@@ -12,7 +12,7 @@ class ConvergencePlot:
 	def __init__(self, parent, tree_params):
 		self.parent = parent
 		self.tree_params = tree_params
-
+		self.convergence_data = None
 		self.setup_ui()
 
 	def setup_ui(self):
