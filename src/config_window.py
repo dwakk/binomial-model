@@ -146,24 +146,23 @@ class ConfigWindow:
         self.viewer_window.geometry("1200x800")
         
         # Gérer la fermeture de la fenêtre
-        self.viewer_window.protocol("WM_DELETE_WINDOW", self.return_to_menu)
+        self.viewer_window.protocol("WM_DELETE_WINDOW", lambda: self.on_viewer_close())
         
-        # Bouton retour
-        btn_frame = ttk.Frame(self.viewer_window)
-        btn_frame.pack(pady=10)
+        # # Bouton retour
+        # btn_frame = ttk.Frame(self.viewer_window)
+        # btn_frame.pack(pady=10)
         
-        ttk.Button(
-            btn_frame, 
-            text="← Retour au Menu", 
-            command=self.return_to_menu
-        ).pack()
+        # ttk.Button(
+        #     btn_frame, 
+        #     text="← Retour au Menu", 
+        #     command=self.return_to_menu
+        # ).pack()
         
         # Créer le visualiseur
         self.visualizer = TreeVisualizer(self.viewer_window, tree)
    
-    def return_to_menu(self):
-        """Retourne au menu principal"""
-        if hasattr(self, 'viewer_window') and self.viewer_window.winfo_exists():
+    def on_viewer_close(self, viewer_window=None):
+        if hasattr(self, 'viewer_window'):
             self.viewer_window.destroy()
         self.root.deiconify()
 

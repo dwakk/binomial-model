@@ -108,13 +108,15 @@ class TreeVisualizer:
 		zoom_frame = ttk.LabelFrame(control_frame, text="Navigation", padding=10)
 		zoom_frame.grid(row=0, column=5, rowspan=2, sticky="nsew", padx=10, pady=5)
 
-		ttk.Button(zoom_frame, text="Zoom -", command=self.zoom_out, width=8).grid(row=0, column=0, padx=2, pady=2)
-		ttk.Button(zoom_frame, text="Reset", command=self.zoom_reset, width=8).grid(row=0, column=1, padx=2, pady=2)
-		ttk.Button(zoom_frame, text="Zoom +", command=self.zoom_in, width=8).grid(row=1, column=0, padx=2, pady=2)
-		ttk.Button(zoom_frame, text="Center", command=self.zoom_center, width=8).grid(row=1, column=1, padx=2, pady=2)
+		ttk.Button(zoom_frame, text="← Menu", command=self.return_to_menu, width=8).grid(row=0, column=0, columnspan=2, pady=(5, 10))
+
+		ttk.Button(zoom_frame, text="Zoom -", command=self.zoom_out, width=8).grid(row=1, column=0, padx=2, pady=2)
+		ttk.Button(zoom_frame, text="Reset", command=self.zoom_reset, width=8).grid(row=1, column=1, padx=2, pady=2)
+		ttk.Button(zoom_frame, text="Zoom +", command=self.zoom_in, width=8).grid(row=2, column=0, padx=2, pady=2)
+		ttk.Button(zoom_frame, text="Center", command=self.zoom_center, width=8).grid(row=2, column=1, padx=2, pady=2)
 
 		self.zoom_label = ttk.Label(zoom_frame, text="100%", font=("Arial", 10, "bold"))
-		self.zoom_label.grid(row=2, column=0, columnspan=2, pady=5)
+		self.zoom_label.grid(row=3, column=0, columnspan=2, pady=5)
 
 		self.canvas = tk.Canvas(self.root, bg='white')
 		self.canvas.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
@@ -136,8 +138,10 @@ class TreeVisualizer:
 		self.canvas.config(cursor="fleur")
 		self.update_zoom_label()
 
-	def on_color_change(self):
-		pass
+	def return_to_menu(self):
+		if self.root.master:
+			self.root.master.deiconify()
+		self.root.destroy()
 
 	def zoom_out(self):
 		old_zoom = self.zoom_factor
